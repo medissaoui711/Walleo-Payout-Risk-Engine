@@ -4,6 +4,14 @@
 
 ---
 
+## 📸 لقطة شاشة مركز التحكم والرقابة (Walleo Sentinel Control Center)
+
+![Walleo Sentinel Control Center](https://lh3.googleusercontent.com/d/1AbohTh3W2nFeHnPt2bUjOfO0IAMYvDFo)
+
+> 🔗 [عرض لقطة الشاشة بدقة كاملة على Google Drive](https://drive.google.com/file/d/1AbohTh3W2nFeHnPt2bUjOfO0IAMYvDFo/view?usp=drivesdk)
+
+---
+
 ## 🌟 أبرز مميزات النظام
 
 ### 1. محرك الأمان وتقييم المخاطر (Walleo Sentinel AI Engine)
