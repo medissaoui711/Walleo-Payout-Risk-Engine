@@ -51,6 +51,13 @@ export function FinancialTestSuite({ lang }: FinancialTestSuiteProps) {
   const total = tests.length;
   const passed = tests.filter(t => t.passed).length;
   const passRate = total > 0 ? Math.round((passed / total) * 100) : 0;
+  const [activeCategory, setActiveCategory] = useState<'ALL' | 'FINANCIAL' | 'SECURITY'>('ALL');
+
+  const filteredTests = tests.filter(t => {
+    if (activeCategory === 'FINANCIAL') return t.id.startsWith('FT-');
+    if (activeCategory === 'SECURITY') return t.id.startsWith('SEC-');
+    return true;
+  });
 
   return (
     <div className="space-y-6">
@@ -61,17 +68,17 @@ export function FinancialTestSuite({ lang }: FinancialTestSuiteProps) {
           <div>
             <div className="flex items-center gap-2 mb-2">
               <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
-                {isAr ? "نظام التدقيق المالي الحتمي" : "Financial Invariants Verification Suite"}
+                {isAr ? "نظام التدقيق المالي ومصفوفة الأمان السيبراني" : "Financial Invariants & Sentinel Security Suite"}
               </span>
-              <span className="text-xs text-slate-400 font-mono">v2.2-strict</span>
+              <span className="text-xs text-slate-400 font-mono">NIST CSF 2.0 / OWASP API Top 10</span>
             </div>
             <h2 className="text-2xl font-bold text-white tracking-tight">
-              {isAr ? "مصفوفة اختبارات سلامة الأموال والـ Idempotency" : "Money Safety & Ledger Invariants Matrix"}
+              {isAr ? "مصفوفة اختبارات الأمان المالي والسيبراني (22 اختباراً)" : "Financial Invariants & Walleo Sentinel Security Suite (22 Tests)"}
             </h2>
             <p className="text-xs text-slate-400 mt-1 max-w-2xl leading-relaxed">
               {isAr 
-                ? "تنفيذ الاختبارات العملية الثمانية للتحقق من سلامة الأرصدة، عزل الصلاحيات Maker/Checker، منع التكرار، وحجز Escrow قبل أي تحويل."
-                : "Automated regression tests proving money safety, double-entry ledger invariants, Maker/Checker segregation, and idempotency."}
+                ? "تنفيذ مؤتمت لـ 8 اختبارات لسلامة القيود المحاسبية، متبوعة بـ 14 اختباراً أمنياً شاملاً (BOLA, BFLA, HMAC, Replay, Mass Assignment, SSRF, Rate Limiting, Upstream Anomaly)."
+                : "Automated regression tests proving double-entry ledger invariants (FT-01..08) alongside 14 critical cyber defenses (SEC-001..014)."}
             </p>
           </div>
 
@@ -94,11 +101,47 @@ export function FinancialTestSuite({ lang }: FinancialTestSuiteProps) {
               ) : (
                 <>
                   <Play className="w-4 h-4 fill-current" />
-                  <span>{isAr ? "إعادة تشغيل المصفوفة" : "Run All Verification Tests"}</span>
+                  <span>{isAr ? "إعادة تشغيل المصفوفة الكاملة" : "Run All 18 Tests"}</span>
                 </>
               )}
             </button>
           </div>
+        </div>
+
+        {/* Category Filters */}
+        <div className="flex items-center gap-2 mt-6 pt-4 border-t border-slate-800">
+          <button
+            onClick={() => setActiveCategory('ALL')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+              activeCategory === 'ALL'
+                ? 'bg-slate-100 text-slate-950 font-bold'
+                : 'bg-slate-800/60 text-slate-400 hover:text-white'
+            }`}
+          >
+            {isAr ? `الكل (${tests.length})` : `All (${tests.length})`}
+          </button>
+          <button
+            onClick={() => setActiveCategory('FINANCIAL')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+              activeCategory === 'FINANCIAL'
+                ? 'bg-emerald-500 text-slate-950 font-bold'
+                : 'bg-slate-800/60 text-slate-400 hover:text-white'
+            }`}
+          >
+            <Scale className="w-3.5 h-3.5" />
+            <span>{isAr ? "سلامة دفتر الأستاذ (FT-01 - FT-08)" : "Ledger Invariants (FT-01 - FT-08)"}</span>
+          </button>
+          <button
+            onClick={() => setActiveCategory('SECURITY')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+              activeCategory === 'SECURITY'
+                ? 'bg-teal-500 text-slate-950 font-bold'
+                : 'bg-slate-800/60 text-slate-400 hover:text-white'
+            }`}
+          >
+            <Lock className="w-3.5 h-3.5" />
+            <span>{isAr ? "أمان واجهات API ومكافحة الاختراق (SEC-001 - SEC-010)" : "API Cyber Defenses (SEC-001 - SEC-010)"}</span>
+          </button>
         </div>
       </div>
 
@@ -107,19 +150,22 @@ export function FinancialTestSuite({ lang }: FinancialTestSuiteProps) {
         {/* Left Column: Test Case Cards */}
         <div className="lg:col-span-6 space-y-3">
           <div className="flex items-center justify-between text-xs text-slate-400 px-1">
-            <span>{isAr ? "حالات الاختبار المالية (8)" : "Financial Test Invariants (8)"}</span>
+            <span>
+              {isAr ? `حالات الاختبار المعروضة (${filteredTests.length})` : `Filtered Test Cases (${filteredTests.length})`}
+            </span>
             <span>{lastExecuted ? new Date(lastExecuted).toLocaleTimeString() : ""}</span>
           </div>
 
-          <div className="space-y-2.5">
-            {tests.map((test) => {
+          <div className="space-y-2.5 max-h-[750px] overflow-y-auto pr-1">
+            {filteredTests.map((test) => {
               const isSelected = selectedTest?.id === test.id;
+              const isSecurityTest = test.id.startsWith('SEC-');
               return (
                 <div
                   key={test.id}
                   id={`test-item-${test.id}`}
                   onClick={() => setSelectedTest(test)}
-                  className={`p-4 rounded-xl border transition-all cursor-pointer ${
+                  className={`p-3.5 rounded-xl border transition-all cursor-pointer ${
                     isSelected
                       ? "bg-slate-800/90 border-emerald-500/50 shadow-md shadow-emerald-950/40"
                       : "bg-slate-900/60 border-slate-800 hover:bg-slate-900 hover:border-slate-700"
@@ -129,15 +175,19 @@ export function FinancialTestSuite({ lang }: FinancialTestSuiteProps) {
                     <div className="flex items-start gap-3">
                       <div className="mt-0.5">
                         {test.passed ? (
-                          <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+                          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                         ) : (
-                          <XCircle className="w-5 h-5 text-red-400 shrink-0" />
+                          <XCircle className="w-4 h-4 text-red-400 shrink-0" />
                         )}
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="font-mono text-xs font-bold text-slate-400">{test.id}</span>
-                          <span className="font-bold text-sm text-white">
+                          <span className={`font-mono text-xs font-bold px-1.5 py-0.2 rounded ${
+                            isSecurityTest ? "bg-teal-500/10 text-teal-400 border border-teal-500/30" : "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
+                          }`}>
+                            {test.id}
+                          </span>
+                          <span className="font-bold text-xs sm:text-sm text-white">
                             {isAr ? test.titleAr : test.title}
                           </span>
                         </div>

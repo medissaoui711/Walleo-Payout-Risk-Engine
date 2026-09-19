@@ -127,7 +127,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               }`}
             >
               <CheckCircle2 className="w-4 h-4" />
-              <span>{isAr ? "مصفوفة الاختبارات الـ 8" : "Financial Invariant Tests"}</span>
+              <span>{isAr ? "مصفوفة الاختبارات (22)" : "Invariant & Security Tests (22)"}</span>
             </button>
 
             <button
