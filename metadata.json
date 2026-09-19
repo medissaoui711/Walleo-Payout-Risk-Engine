@@ -1,0 +1,6 @@
+{
+  "name": "Walleo - Payout & Risk Engine",
+  "description": "منصة إدارة مدفوعات التجار وتقييم المخاطر الفورية وسحب الأرباح الذكي بمحرك Walleo Sentinel والذكاء الاصطناعي لتجار تونس وقطر والشرق الأوسط",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
