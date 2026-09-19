@@ -101,7 +101,7 @@ export function FinancialTestSuite({ lang }: FinancialTestSuiteProps) {
               ) : (
                 <>
                   <Play className="w-4 h-4 fill-current" />
-                  <span>{isAr ? "إعادة تشغيل المصفوفة الكاملة" : "Run All 18 Tests"}</span>
+                  <span>{isAr ? "إعادة تشغيل المصفوفة الكاملة" : "Run All 22 Tests"}</span>
                 </>
               )}
             </button>
@@ -140,7 +140,7 @@ export function FinancialTestSuite({ lang }: FinancialTestSuiteProps) {
             }`}
           >
             <Lock className="w-3.5 h-3.5" />
-            <span>{isAr ? "أمان واجهات API ومكافحة الاختراق (SEC-001 - SEC-010)" : "API Cyber Defenses (SEC-001 - SEC-010)"}</span>
+            <span>{isAr ? "أمان واجهات API ومكافحة الاختراق (SEC-001 - SEC-014)" : "API Cyber Defenses (SEC-001 - SEC-014)"}</span>
           </button>
         </div>
       </div>

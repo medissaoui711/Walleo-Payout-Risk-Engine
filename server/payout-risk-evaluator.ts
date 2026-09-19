@@ -22,6 +22,10 @@ function getGenAI(): GoogleGenAI | null {
   return genAIInstance;
 }
 
+// Cache analysis results to avoid redundant API calls and respect rate limits
+const analysisCache = new Map<string, { analysis: string; timestamp: number }>();
+let lastRateLimitTime = 0;
+
 export async function evaluatePayoutRisk(
   merchantId: string,
   payoutAmount: number,
@@ -90,10 +94,20 @@ export async function evaluatePayoutRisk(
     trustScore = Math.max(trustScore, 82);
   }
 
-  // Optional AI Deep Forensic Reasoning via Gemini
+  // Optional AI Deep Forensic Reasoning via Gemini with caching & 429/503 backoff
   let geminiAnalysis: string | undefined = undefined;
+  const cacheKey = `${state.merchant_id || merchantId}_${state.payout_amount_usd}_${state.chargeback_count_90d}_${state.open_disputes_count}_${state.velocity_24h_count}_${riskLevel}`;
+
+  const cached = analysisCache.get(cacheKey);
+  if (cached && (Date.now() - cached.timestamp < 300000)) { // 5-minute memory cache
+    geminiAnalysis = cached.analysis;
+  }
+
+  const now = Date.now();
+  const isBackingOff = now - lastRateLimitTime < 60000; // 60s cooldown when quota is exhausted
   const ai = getGenAI();
-  if (ai) {
+
+  if (ai && !geminiAnalysis && !isBackingOff) {
     try {
       const prompt = `Analyze this merchant payout request as a senior Fintech Risk Officer for the MENA/Tunisia/Qatar payment network (Walleo):
 Merchant State:
@@ -112,8 +126,21 @@ Provide a concise 2-sentence Arabic and English risk verdict explaining the key 
         contents: prompt,
       });
       geminiAnalysis = response.text?.trim();
-    } catch (aiErr) {
-      console.warn("Gemini risk audit fallback:", aiErr);
+      if (geminiAnalysis) {
+        analysisCache.set(cacheKey, { analysis: geminiAnalysis, timestamp: Date.now() });
+      }
+    } catch (aiErr: any) {
+      const status = aiErr?.status || aiErr?.code || aiErr?.error?.code;
+      const msg = aiErr?.message || (typeof aiErr === "string" ? aiErr : JSON.stringify(aiErr));
+
+      if (status === 429 || msg?.includes("429") || msg?.includes("RESOURCE_EXHAUSTED") || msg?.includes("quota")) {
+        lastRateLimitTime = Date.now();
+        console.info("Gemini risk audit: Quota rate limit reached (429). Seamlessly using deterministic fintech risk heuristic.");
+      } else if (status === 503 || msg?.includes("503") || msg?.includes("high demand") || msg?.includes("UNAVAILABLE")) {
+        console.info("Gemini risk service experiencing temporary high demand (503). Seamlessly using deterministic fintech risk heuristic.");
+      } else {
+        console.info("Gemini risk audit fallback notice: Deterministic risk rules active.");
+      }
     }
   }
 
