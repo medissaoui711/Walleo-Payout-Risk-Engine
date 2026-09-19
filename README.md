@@ -6,9 +6,9 @@
 
 ## 📸 لقطة شاشة مركز التحكم والرقابة (Walleo Sentinel Control Center)
 
-![Walleo Sentinel Control Center](https://lh3.googleusercontent.com/d/1AbohTh3W2nFeHnPt2bUjOfO0IAMYvDFo)
+![Walleo Sentinel Control Center](https://lh3.googleusercontent.com/d/18dhQbrdvNB1yK19Tu0RAzD9elI1BctIJ)
 
-> 🔗 [عرض لقطة الشاشة بدقة كاملة على Google Drive](https://drive.google.com/file/d/1AbohTh3W2nFeHnPt2bUjOfO0IAMYvDFo/view?usp=drivesdk)
+> 🔗 [عرض لقطة الشاشة بدقة كاملة على Google Drive](https://drive.google.com/file/d/18dhQbrdvNB1yK19Tu0RAzD9elI1BctIJ/view?usp=drivesdk)
 
 ---
 
